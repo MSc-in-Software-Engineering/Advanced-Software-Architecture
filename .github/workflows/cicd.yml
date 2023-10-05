@@ -12,7 +12,7 @@ on:
 
 env:
   PACKAGE_REGISTRY_TO_USE: kavim19
-  DOCKER_IMAGE_CONVEYER_BELTS: python_conveyer_belts_pub
+  DOCKER_IMAGE_CONVEYOR_BELTS: python_conveyor_belts_pub
   DOCKER_IMAGE_IOT: python_iot_pub
   DOCKER_IMAGE_ROBOTICS: python_robotics_pub
   PROJECT_NAME: LegoRecycling
@@ -111,9 +111,9 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/ConveyerBelts
+          context: ./src/ConveyorBelts
           push: true
-          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYER_BELTS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYER_BELTS }}:latest
+          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYOR_BELTS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYOR_BELTS }}:latest
 
   # Job to build the IoT image
   build-iot:
