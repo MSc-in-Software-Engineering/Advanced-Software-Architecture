@@ -17,6 +17,15 @@ services:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on: 
       - production-broker
+
+  robotics:
+    build:
+      context: ./Robotics
+      dockerfile: Dockerfile
+    environment: 
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on: 
+      - production-broker
     
   production-broker:
     image: eclipse-mosquitto:latest
