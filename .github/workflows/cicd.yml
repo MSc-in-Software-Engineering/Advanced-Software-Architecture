@@ -11,6 +11,7 @@ on:
       - master
 
 env:
+  SSH_USERNAME: kavim19
   PACKAGE_REGISTRY_TO_USE: kavim19
   DOCKER_IMAGE_CONVEYOR_BELTS: python_conveyor_belts_pub
   DOCKER_IMAGE_IOT: python_iot_pub
@@ -190,15 +191,15 @@ jobs:
 
       - name: Transfer docker-compose to server
         run: |
-          scp ./src/docker-compose.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
+          scp ./src/docker-compose.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }}:/home/${{ env.SSH_USERNAME }}
       - name: Transfer mosquitto config to server
         run: |
-          scp ./src/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
+          scp ./src/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }}:/home/${{ env.SSH_USERNAME }}
         continue-on-error: true
       - name: Run docker-compose Down on VM
         run: |
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.yml down"
+          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml down"
       - name: Run docker-compose --build up on VM
         run: |
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.yml build --no-cache" &&
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.yml up -d"
+          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml build --no-cache" &&
+          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml up -d"
