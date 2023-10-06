@@ -183,10 +183,10 @@ jobs:
           name: repository-artifacts
           path: .
 
-      - name: Setup SSH Key
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
+      #- name: Setup SSH Key
+      #  run: |
+      #    echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
+      #    chmod 600 private_key.pem
 
       - name: Transfer docker-compose to server
         run: |
