@@ -173,7 +173,7 @@ jobs:
 
   # Job to deploy application to VM
   deploy-application:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: [build-conveyor-belts, build-iot, build-robotics]
     continue-on-error: true
     steps:
