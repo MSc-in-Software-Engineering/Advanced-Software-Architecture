@@ -11,7 +11,7 @@ on:
       - master
 
 env:
-  SSH_USERNAME: kavim19
+  SSH_USERNAME: waraz19
   PACKAGE_REGISTRY_TO_USE: kavim19
   DOCKER_IMAGE_CONVEYOR_BELTS: python_conveyor_belts_pub
   DOCKER_IMAGE_IOT: python_iot_pub
