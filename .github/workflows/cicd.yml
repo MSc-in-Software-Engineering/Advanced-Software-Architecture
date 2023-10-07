@@ -172,6 +172,7 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:latest
 
+  # Job to deploy to VM
   deploy-application:
     runs-on: self-hosted
     needs: [build-conveyor-belts, build-iot, build-robotics]
