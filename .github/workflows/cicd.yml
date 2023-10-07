@@ -34,6 +34,13 @@ jobs:
         with:
           name: repository-artifacts
           path: .
+      - name: Upload Docker Compose
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-artifact
+          path: |
+            ./src/docker-compose.prod.yml
+            ./src/mosquitto.conf
 
   # Job to perform static code analysis
   code-analysis:
