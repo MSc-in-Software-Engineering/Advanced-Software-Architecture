@@ -172,34 +172,35 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:latest
 
-  # Job to deploy application to VM
   deploy-application:
     runs-on: self-hosted
     needs: [build-conveyor-belts, build-iot, build-robotics]
     continue-on-error: true
     steps:
-      - name: Download repository artifact
+      - name: Download Deployment Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: repository-artifacts
-          path: .
+          name: deployment-artifact
+          path: ./src
 
-      #- name: Setup SSH Key
-      #  run: |
-      #    echo "${{ secrets.SSH_PRIVATE_KEY }}" > private_key.pem
-      #    chmod 600 private_key.pem
+      - name: Setup SSH Key
+        shell: powershell
+        run: |
+          $env:SSH_PRIVATE_KEY -replace '\\n', "`n" | Out-File -FilePath private_key.pem -Encoding ascii
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Transfer docker-compose to server
         run: |
-          scp ./src/docker-compose.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }}:/home/${{ env.SSH_USERNAME }}
+          scp -o StrictHostKeyChecking=no -i ./private_key.pem ./src/docker-compose.prod.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
       - name: Transfer mosquitto config to server
         run: |
-          scp ./src/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }}:/home/${{ env.SSH_USERNAME }}
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./src/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
         continue-on-error: true
       - name: Run docker-compose Down on VM
         run: |
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml down"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.prod.yml down"
       - name: Run docker-compose --build up on VM
         run: |
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml build --no-cache" &&
-          ssh ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_NAME }} "docker compose -f docker-compose.yml up -d"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.prod.yml build --no-cache"
+          ssh -o StrictHostKeyChecking=no -i private_key.pem ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }} "docker compose -f docker-compose.prod.yml up -d"
