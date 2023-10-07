@@ -1,0 +1,36 @@
+version: "3"
+services:
+  iot:
+    build:
+      context: ghcr.io/msc-in-software-engineering/python_iot_pub:latest
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
+  conveyor-belts:
+    build:
+      context: ghcr.io/msc-in-software-engineering/python_conveyor_belts_pub:latest
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
+  robotics:
+    build:
+      context: ghcr.io/msc-in-software-engineering/python_robotics_pub:latest
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
+  production-broker:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
