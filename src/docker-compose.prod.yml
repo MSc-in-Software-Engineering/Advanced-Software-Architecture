@@ -3,7 +3,6 @@ services:
   iot:
     build:
       context: ghcr.io/msc-in-software-engineering/python_iot_pub:latest
-      dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
@@ -12,7 +11,6 @@ services:
   conveyor-belts:
     build:
       context: ghcr.io/msc-in-software-engineering/python_conveyor_belts_pub:latest
-      dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
@@ -21,7 +19,6 @@ services:
   robotics:
     build:
       context: ghcr.io/msc-in-software-engineering/python_robotics_pub:latest
-      dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
