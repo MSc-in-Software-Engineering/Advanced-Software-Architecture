@@ -1,24 +1,21 @@
 version: "3"
 services:
   iot:
-    build:
-      context: ghcr.io/msc-in-software-engineering/python_iot_pub:latest
+    image: ghcr.io/msc-in-software-engineering/python_iot_pub:latest
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
       - production-broker
 
   conveyor-belts:
-    build:
-      context: ghcr.io/msc-in-software-engineering/python_conveyor_belts_pub:latest
+    image: ghcr.io/msc-in-software-engineering/python_conveyor_belts_pub:latest
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
       - production-broker
 
   robotics:
-    build:
-      context: ghcr.io/msc-in-software-engineering/python_robotics_pub:latest
+    image: ghcr.io/msc-in-software-engineering/python_robotics_pub:latest
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
