@@ -46,9 +46,7 @@ services:
       - production-broker
 
   warehouse:
-    build:
-      context: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
-      dockerfile: Dockerfile
+    image: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
     environment:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
