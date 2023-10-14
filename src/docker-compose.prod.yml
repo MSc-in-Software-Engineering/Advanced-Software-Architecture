@@ -53,3 +53,7 @@ services:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
       - kafka
+
+volumes:
+  kafka_data:
+    driver: local
