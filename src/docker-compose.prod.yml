@@ -45,13 +45,15 @@ services:
     depends_on:
       - production-broker
 
-  warehouse: 
-    build: 
+  warehouse:
+    build:
       context: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
       dockerfile: Dockerfile
-    environment: 
+    environment:
       - KAFKA_BROKER_ADDRESS=kafka
-    depends_on: 
+    depends_on:
       - kafka
 
-
+volumes:
+  kafka_data:
+    driver: local
