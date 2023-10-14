@@ -15,6 +15,7 @@ env:
   DOCKER_IMAGE_CONVEYOR_BELTS: python_conveyor_belts_pub
   DOCKER_IMAGE_IOT: python_iot_pub
   DOCKER_IMAGE_ROBOTICS: python_robotics_pub
+  DOCKER_IMAGE_WAREHOUSE: python_warehouse_pub_sub
   PROJECT_NAME: LegoRecycling
   GROUP_NUMBER: Group01
 
@@ -118,7 +119,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/ConveyorBelts
+          context: ./src/ProductionFloor/ConveyorBelts
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYOR_BELTS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_CONVEYOR_BELTS }}:latest
 
@@ -146,7 +147,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/IoT
+          context: ./src/ProductionFloor/IoT
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_IOT }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_IOT }}:latest
 
@@ -174,9 +175,37 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/Robotics
+          context: ./src/ProductionFloor/Robotics
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_ROBOTICS }}:latest
+
+  # Job to build the warehouse image
+  build-warehouse:
+    runs-on: ubuntu-latest
+    needs: [test-application]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Download repository artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-artifacts
+          path: .
+      - name: Login to GitHub Package Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Transform username to lowercase
+        run: echo "OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Build & Push image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/Warehouse/
+          push: true
+          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE }}:latest
 
   # Job to deploy to VM
   deploy-application:
@@ -200,9 +229,9 @@ jobs:
       - name: Transfer docker-compose to server
         run: |
           scp -o StrictHostKeyChecking=no -i ./private_key.pem ./src/docker-compose.prod.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
-      - name: Transfer mosquitto config to server
+      - name: Transfer ProductionFloor mosquitto config to server for the MQTT production broker
         run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem ./src/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
+          scp -o StrictHostKeyChecking=no -i private_key.pem ./src/ProductionFloor/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
         continue-on-error: true
       - name: Run docker-compose Down on VM
         run: |

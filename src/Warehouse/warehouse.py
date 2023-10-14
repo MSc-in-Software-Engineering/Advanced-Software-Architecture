@@ -1,67 +1,82 @@
-import os
-from confluent_kafka import Producer, Consumer, KafkaError
 import logging
+import os
+import random
+from time import sleep
+from confluent_kafka import Producer, Consumer
 
-logger = logging.getLogger("warehouse_logger")
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger("Warehouse")
+
 
 kafka_broker = os.environ.get("KAFKA_BROKER_ADDRESS")
 kafka_group_id = "warehouse_group"
 kafka_producer_topic = "warehouse"
 kafka_consumer_topic = "mqtt_mediator"
+kafka_producer = Producer({"bootstrap.servers": kafka_broker})
+kafka_consumer = Consumer(
+    {
+        "bootstrap.servers": kafka_broker,
+        "group.id": kafka_group_id,
+        "auto.offset.reset": "earliest",
+    }
+)
+kafka_consumer.subscribe([kafka_consumer_topic])
 
-class Bucket:
-    def __init__(self, id):
-        self.id = id
+capacity = random.randint(1, 10)
+buckets = []
 
-class Storage:
-    def __init__(self, capacity):
-        self.capacity = capacity
-        self.buckets = []
-        self.kafka_producer = Producer({'bootstrap.servers': kafka_broker})
-        self.kafka_consumer = Consumer({
-            'bootstrap.servers': kafka_broker,
-            'group.id': kafka_group_id,
-            'auto.offset.reset': 'earliest'
-        })
-        self.kafka_consumer.subscribe([kafka_consumer_topic])
 
-    def add_bucket(self, bucket):
-        if len(self.buckets) < self.capacity:
-            self.buckets.append(bucket)
-            print(f'Bucket {bucket.id} added to storage.')
-            self._send_to_kafka(f'Bucket {bucket.id} added to storage.')
+def produce_bucket_notification():
+    """Produce event to the warehouse topic that states a bucket is available in the warehouse for pickup."""
+    logger.info("Notifying the production floor that a bucket is awaiting pick up...")
+
+    kafka_producer.produce(
+        kafka_producer_topic,
+        key="bucket_event",
+        value="A bucket is in storage at the warehouse and is awaiting pick up...",
+    )
+    kafka_producer.flush()
+
+
+def consume_production_cycles():
+    """Consume events from the mqtt-mediator topic that monitors if a full production cycle has been finished."""
+
+    while True:
+        message = kafka_consumer.poll(timeout=1.0)
+        if message is None:
+            continue
+        elif message.error():
+            logger.warning(
+                f"The topic [{kafka_consumer_topic}] is not available for utilization..."
+            )
+            logger.info(
+                f"Trying to consume from the topic [{kafka_consumer_topic}] in 5 minutes..."
+            )
+            sleep(300)
         else:
-            print('Storage is full. Cannot add more buckets.')
+            if len(buckets) != 0:
+                produce_bucket_notification()
+                logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
+                buckets.pop()
+            else:
+                logger.info(
+                    f"Warehouse has [{len(buckets)}] buckets in storage for pick up..."
+                )
+                kafka_consumer.close()
 
-    def _send_to_kafka(self, message):
-        self.kafka_producer.produce(kafka_producer_topic, key='bucket_event', value=message)
-        self.kafka_producer.flush()
 
-    def consume_from_kafka(self):
-        while True:
-            try:
-                msg = self.kafka_consumer.poll(1.0)
+for bucket in range(capacity):
+    logger.info(
+        f"Warehouse received [{bucket + 1}] bucket(s) of reused Lego bricks... is now being stored for a robot arm to take."
+    )
+    buckets.append(bucket)
 
-                if msg is None:
-                    continue
-                if msg.error():
-                    if msg.error().code() == KafkaError._PARTITION_EOF:
-                        continue
-                    else:
-                        print(msg.error())
-                        break
+    sleep(0.5)
 
-                print('Received message: {}'.format(msg.value()))
-            except KafkaError as e:
-                print(f"Kafka consumer error: {e}")
+logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
 
-# Create a storage with a capacity of 5 buckets
-storage = Storage(5)
+# Produce first event that notifies a bucket is available.
+produce_bucket_notification()
 
-# Add some buckets to the storage
-for i in range(1, 6):
-    bucket = Bucket(i)
-    storage.add_bucket(bucket)
-
-# Start consuming messages from Kafka
-storage.consume_from_kafka()
+# Listening to production cycle events until warehouse is empty of buckets.
+consume_production_cycles()
