@@ -6,7 +6,7 @@ CREATE TABLE warehouse (
 
 CREATE TABLE latency (
     id SERIAL PRIMARY KEY, 
-    produced VARCHAR(255) NOT NULL, 
+    produced TIMESTAMP NOT NULL, 
     consumed TIMESTAMP NOT NULL
 );
 

@@ -4,6 +4,7 @@ import logging
 import os
 import random
 import psycopg2
+import datetime
 from time import sleep
 from confluent_kafka import Producer, Consumer
 
@@ -22,7 +23,7 @@ kafka_consumer = Consumer(
     {
         "bootstrap.servers": kafka_broker,
         "group.id": kafka_group_id,
-        "auto.offset.reset": "earliest",
+        "auto.offset.reset": "latest",
     }
 )
 kafka_consumer.subscribe([kafka_consumer_topic])
@@ -70,6 +71,7 @@ def consume_production_cycles():
                 analyze_storage_efficiency()
                 add_buckets_to_storage()
                 
+            send_metrics(message.timestamp)
 
 def add_buckets_to_storage():
     """Add received buckets into storage."""
@@ -99,15 +101,22 @@ def analyze_storage_efficiency():
     
     connection_cursor.execute("""INSERT INTO warehouse (efficiency) VALUES (%s)""", (random_measurement,))
     postgres_connection.commit()
-
+    
+def send_metrics(produced_timestamp):
+    """Send latency metrics to database"""
+    
+    produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(produced_timestamp / 1000).isoformat()
+    consumed_timestamp_to_isoformat = datetime.datetime.utcnow().isoformat(timespec='microseconds')
+    
+    logger.info(f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]")
+    connection_cursor.execute("""INSERT INTO latency (produced, consumed) VALUES (%s, %s)""", (produced_timestamp_to_isoformat, consumed_timestamp_to_isoformat,))
+    postgres_connection.commit()
+ 
 add_buckets_to_storage()
-
 logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
 
 # Produce first event that notifies a bucket is available.
 produce_bucket_notification()
-
-analyze_storage_efficiency()
 
 # Listening to production cycle events until warehouse is empty of buckets.
 consume_production_cycles()
