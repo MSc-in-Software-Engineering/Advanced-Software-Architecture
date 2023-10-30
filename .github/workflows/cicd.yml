@@ -17,7 +17,7 @@ env:
   DOCKER_IMAGE_ROBOTICS: python_robotics_pub
   DOCKER_IMAGE_WAREHOUSE: python_warehouse_pub_sub
   DOCKER_IMAGE_WAREHOUSE_SYSTEM: ts_warehouse_system_sub
-  DOCKER_IMAGE_WAREHOUSE_DATABASE: postgres-supply-chain-management-database
+  DOCKER_IMAGE_SUPPLY_CHAIN_MANAGEMENT_DATABASE: postgres-supply-chain-management-database
   PROJECT_NAME: LegoRecycling
   GROUP_NUMBER: Group01
 
@@ -237,8 +237,8 @@ jobs:
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_SYSTEM }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_SYSTEM }}:latest
 
-  # Job to build the warehouse database image
-  build-warehouse-database:
+  # Job to build the supplt chain management database image
+  build-supply-chain-management-database:
     runs-on: ubuntu-latest
     needs: [test-application]
     permissions:
@@ -261,9 +261,9 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/WarehouseDatabase/
+          context: ./src/SupplyChainManagementDatabase/
           push: true
-          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_DATABASE }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_DATABASE }}:latest
+          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_SUPPLY_CHAIN_MANAGEMENT_DATABASE }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_SUPPLY_CHAIN_MANAGEMENT_DATABASE }}:latest
 
   # Job to deploy to VM
   deploy-application:
