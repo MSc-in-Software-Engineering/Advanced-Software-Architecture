@@ -46,11 +46,11 @@ services:
       - production-broker
 
   supply-chain-management-database:
-    build:
-      context: ghcr.io/msc-in-software-engineering/postgres-supply-chain-management-database:latest
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
+    image: ghcr.io/msc-in-software-engineering/postgres-supply-chain-management-database:latest
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
 
   warehouse:
     image: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
