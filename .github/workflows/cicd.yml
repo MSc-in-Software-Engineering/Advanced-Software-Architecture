@@ -16,6 +16,8 @@ env:
   DOCKER_IMAGE_IOT: python_iot_pub
   DOCKER_IMAGE_ROBOTICS: python_robotics_pub
   DOCKER_IMAGE_WAREHOUSE: python_warehouse_pub_sub
+  DOCKER_IMAGE_WAREHOUSE_SYSTEM: ts_warehouse_system_sub
+  DOCKER_IMAGE_WAREHOUSE_DATABASE: postgres-supply-chain-management-database
   PROJECT_NAME: LegoRecycling
   GROUP_NUMBER: Group01
 
@@ -206,6 +208,62 @@ jobs:
           context: ./src/Warehouse/
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE }}:latest
+
+  # Job to build the warehouse system image
+  build-warehouse-system:
+    runs-on: ubuntu-latest
+    needs: [test-application]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Download repository artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-artifacts
+          path: .
+      - name: Login to GitHub Package Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Transform username to lowercase
+        run: echo "OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Build & Push image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/WarehouseSystem/
+          push: true
+          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_SYSTEM }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_SYSTEM }}:latest
+
+  # Job to build the warehouse database image
+  build-warehouse-database:
+    runs-on: ubuntu-latest
+    needs: [test-application]
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - name: Download repository artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: repository-artifacts
+          path: .
+      - name: Login to GitHub Package Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Transform username to lowercase
+        run: echo "OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+      - name: Build & Push image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/WarehouseDatabase/
+          push: true
+          tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_DATABASE }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_WAREHOUSE_DATABASE }}:latest
 
   # Job to deploy to VM
   deploy-application:

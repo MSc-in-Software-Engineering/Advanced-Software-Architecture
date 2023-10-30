@@ -45,8 +45,23 @@ services:
     depends_on:
       - production-broker
 
+  supply-chain-management-database:
+    build:
+      context: ghcr.io/msc-in-software-engineering/postgres-supply-chain-management-database:latest
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+
   warehouse:
     image: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+
+  warehouse-system:
+    image: ghcr.io/msc-in-software-engineering/ts_warehouse_system_sub:latest
     environment:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:

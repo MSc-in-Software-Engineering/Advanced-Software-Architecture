@@ -16,13 +16,28 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-  warehouse: 
-    build: 
+  supply-chain-management-database:
+    build:
+      context: ./SupplyChainManagementDatabase/
+      dockerfile: Dockerfile
+    ports:
+      - "5432:5432"
+  warehouse:
+    build:
       context: ./Warehouse/
       dockerfile: Dockerfile
-    environment: 
+    environment:
       - KAFKA_BROKER_ADDRESS=kafka
-    depends_on: 
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+  warehouse-system:
+    build:
+      context: ./WarehouseSystem/
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
       - kafka
 volumes:
   kafka_data:

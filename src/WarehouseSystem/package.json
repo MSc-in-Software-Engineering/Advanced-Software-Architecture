@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "kafkajs": "^2.2.4",
+    "ts-node": "^10.9.1"
+  }
+}
