@@ -2,6 +2,7 @@ from confluent_kafka import Producer
 import paho.mqtt.client as mqtt
 import os
 import logging
+import json
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("MQTT Mediator")
@@ -19,16 +20,18 @@ def on_message(client, userdata, msg):
         topic = msg.topic
         message = msg.payload.decode("utf-8")
         logger.info(f"Received MQTT message on topic {topic}: {message}")
+        json_data = json.loads(message)
+        timestamp = json_data.get("timestamp")
+        message_content = json_data.get("message")
 
-        logger.info(topic)
         if (topic == "robotic_arms"):
             topic = "production-cycle"
-            if (message == "0"):
-                message = "Taking materials from warehouse"
+            if (message_content == "0"):
+                message_content = "Taking materials from warehouse"
             else:
-                message = "Adding package to warehouse"
+                message_content = "Adding package to warehouse"
 
-        kafka_producer.produce(topic, key=None, value=message)
+        kafka_producer.produce(topic, key=None, value=json.dumps({"timestamp": timestamp, "value":message_content}))
         kafka_producer.flush()
     except Exception as e:
         logger.info(f"Error processing MQTT message: {str(e)}")
