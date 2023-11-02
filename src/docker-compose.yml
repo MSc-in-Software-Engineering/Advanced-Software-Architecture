@@ -39,6 +39,14 @@ services:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
       - kafka
+  customer-service:
+    build:
+      context: ./CustomerService
+      dockerfile: Dockerfile
+    env_file:
+      - ./CustomerService/.env
+    depends_on:
+      - supply-chain-management-database
 volumes:
   kafka_data:
     driver: local
