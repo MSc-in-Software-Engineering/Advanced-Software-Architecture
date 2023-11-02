@@ -16,6 +16,11 @@ CREATE TABLE inventory (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE inventorymanagement (
+    id SERIAL PRIMARY KEY, 
+    buckets_of_raw_materials VARCHAR
+);
+
 INSERT INTO inventory (order_state) VALUES ('Pending');
 INSERT INTO inventory (order_state) VALUES ('Processing');
 INSERT INTO inventory (order_state) VALUES ('Delivered');
