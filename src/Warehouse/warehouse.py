@@ -16,7 +16,7 @@ connection_cursor = postgres_connection.cursor()
 
 kafka_broker = os.environ.get("KAFKA_BROKER_ADDRESS")
 kafka_group_id = "warehouse_group"
-kafka_producer_topic = ("warehouse", "efficiency")
+kafka_producer_topic = ("warehouse", "efficiency", "inventory")
 kafka_consumer_topic = "production-cycle"
 kafka_producer = Producer({"bootstrap.servers": kafka_broker})
 kafka_consumer = Consumer(
@@ -113,7 +113,7 @@ def store_order_delivery_state():
     order_state = random.choice(state)
     
     kafka_producer.produce(
-        kafka_producer_topic[1],
+        kafka_producer_topic[2],
         key="inventory_event",
         value=f'A produced package has been sent to inventory, and is in delivery state [{order_state}].',
     )
