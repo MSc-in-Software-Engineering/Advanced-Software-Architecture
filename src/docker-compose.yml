@@ -31,6 +31,15 @@ services:
     depends_on:
       - kafka
       - supply-chain-management-database
+  production-management-system:
+    build:
+      context: ./ProductionManagement/ProductionManagementSystem/
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
   warehouse-system:
     build:
       context: ./WarehouseSystem/

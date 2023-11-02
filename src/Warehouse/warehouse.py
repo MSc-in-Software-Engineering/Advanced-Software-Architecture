@@ -16,7 +16,7 @@ connection_cursor = postgres_connection.cursor()
 
 kafka_broker = os.environ.get("KAFKA_BROKER_ADDRESS")
 kafka_group_id = "warehouse_group"
-kafka_producer_topic = ("warehouse", "efficiency", "inventory")
+kafka_producer_topic = ("warehouse", "efficiency", "inventory", "capacity")
 kafka_consumer_topic = "production-cycle"
 kafka_producer = Producer({"bootstrap.servers": kafka_broker})
 kafka_consumer = Consumer(
@@ -77,7 +77,14 @@ def consume_production_cycles():
 def add_buckets_to_storage():
     """Add received buckets into storage."""
     capacity = random.randint(1, 10)
-    
+
+    kafka_producer.produce(
+        kafka_producer_topic[3],
+        key="capacity_event",
+        value=str(capacity),
+    )
+    kafka_producer.flush()    
+
     for bucket in range(capacity):
         logger.info(
             f"Warehouse received [{bucket + 1}] bucket(s) of reused Lego bricks... is now being stored for a robot arm to take."
@@ -115,7 +122,7 @@ def store_order_delivery_state():
     kafka_producer.produce(
         kafka_producer_topic[2],
         key="inventory_event",
-        value=f'A produced package has been sent to inventory, and is in delivery state [{order_state}].',
+        value=f'{order_state}',
     )
     kafka_producer.flush()
     
