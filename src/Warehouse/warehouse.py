@@ -28,7 +28,7 @@ kafka_consumer = Consumer(
 )
 kafka_consumer.subscribe([kafka_consumer_topic])
 
-capacity = random.randint(1, 10)
+capacity = None
 buckets = []
 
 
@@ -64,6 +64,7 @@ def consume_production_cycles():
                 produce_bucket_notification()
                 logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
                 buckets.pop()
+                store_order_delivery_state()
             else:
                 logger.info(
                     f"Warehouse has [{len(buckets)}] buckets in storage for pick up, adding more..."
@@ -75,6 +76,7 @@ def consume_production_cycles():
 
 def add_buckets_to_storage():
     """Add received buckets into storage."""
+    capacity = random.randint(1, 10)
     
     for bucket in range(capacity):
         logger.info(
@@ -100,6 +102,24 @@ def analyze_storage_efficiency():
     kafka_producer.flush()
     
     connection_cursor.execute("""INSERT INTO warehouse (efficiency) VALUES (%s)""", (random_measurement,))
+    postgres_connection.commit()
+    
+def store_order_delivery_state():
+    """Store order delivery state at random."""
+    
+    logger.info("Storing order delivery state for future analysis...")
+    
+    state = ["Pending", "Processing", "Picked", "Packed", "Shipped", "Out of delivery", "Delivered"]
+    order_state = random.choice(state)
+    
+    kafka_producer.produce(
+        kafka_producer_topic[1],
+        key="inventory_event",
+        value=f'A produced package has been sent to inventory, and is in delivery state [{order_state}].',
+    )
+    kafka_producer.flush()
+    
+    connection_cursor.execute("""INSERT INTO inventory (order_state) VALUES (%s)""", (order_state,))
     postgres_connection.commit()
     
 def send_metrics(produced_timestamp):
