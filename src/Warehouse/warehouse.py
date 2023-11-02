@@ -56,9 +56,9 @@ def consume_production_cycles():
                 f"The topic [{kafka_consumer_topic}] is not available for utilization..."
             )
             logger.info(
-                f"Trying to consume from the topic [{kafka_consumer_topic}] in 5 minutes..."
+                f"Trying to consume from the topic [{kafka_consumer_topic}] in a minute..."
             )
-            sleep(300)
+            sleep(60)
         else:
             if len(buckets) != 0:
                 produce_bucket_notification()

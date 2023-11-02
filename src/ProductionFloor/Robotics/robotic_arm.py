@@ -14,11 +14,10 @@ client.loop_start()
 
 try:
     while True:
-        robot_arm_state = random.choice([0, 1])
-
-        client.publish(mqtt_topic, payload=str(robot_arm_state), qos=0)
-        
-        time.sleep(random.uniform(1, 5))
+        client.publish(mqtt_topic, payload=str(0), qos=0)
+        time.sleep(30)
+        client.publish(mqtt_topic, payload=str(1), qos=0)
+        time.sleep(30)
 finally:
     client.disconnect()
     client.loop_stop()

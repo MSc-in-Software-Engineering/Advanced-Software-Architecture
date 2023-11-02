@@ -20,6 +20,14 @@ def on_message(client, userdata, msg):
         message = msg.payload.decode("utf-8")
         logger.info(f"Received MQTT message on topic {topic}: {message}")
 
+        logger.info(topic)
+        if (topic == "robotic_arms"):
+            topic = "production-cycle"
+            if (message == "0"):
+                message = "Taking materials from warehouse"
+            else:
+                message = "Adding package to warehouse"
+
         kafka_producer.produce(topic, key=None, value=message)
         kafka_producer.flush()
     except Exception as e:

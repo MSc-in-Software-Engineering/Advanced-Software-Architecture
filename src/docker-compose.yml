@@ -39,6 +39,7 @@ services:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
       - kafka
+
   customer-service:
     build:
       context: ./CustomerService
@@ -47,6 +48,35 @@ services:
       - ./CustomerService/.env
     depends_on:
       - supply-chain-management-database
+
+  mqtt-mediator:
+    build:
+      context: ./MQTTMediator/
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - kafka
+    restart: on-failure
+
+  robotics:
+    build:
+      context: ./ProductionFloor/Robotics
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
+  production-broker:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./ProductionFloor/mosquitto.conf:/mosquitto/config/mosquitto.conf
+
 volumes:
   kafka_data:
     driver: local
