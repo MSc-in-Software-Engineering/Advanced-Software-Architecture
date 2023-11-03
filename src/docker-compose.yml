@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+  ### Kafka
   kafka:
     image: docker.io/bitnami/kafka:3.5
     ports:
@@ -16,12 +17,8 @@ services:
       - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
-  supply-chain-management-database:
-    build:
-      context: ./SupplyChainManagementDatabase/
-      dockerfile: Dockerfile
-    ports:
-      - "5432:5432"
+
+  ### Warehouse
   warehouse:
     build:
       context: ./Warehouse/
@@ -31,15 +28,15 @@ services:
     depends_on:
       - kafka
       - supply-chain-management-database
-  production-management-system:
+
+  ### SCM
+  supply-chain-management-database:
     build:
-      context: ./ProductionManagement/ProductionManagementSystem/
+      context: ./SupplyChainManagementDatabase/
       dockerfile: Dockerfile
-    environment:
-      - KAFKA_BROKER_ADDRESS=kafka
-    depends_on:
-      - kafka
-      - supply-chain-management-database
+    ports:
+      - "5432:5432"
+
   warehouse-system:
     build:
       context: ./WarehouseSystem/
@@ -58,6 +55,18 @@ services:
     depends_on:
       - supply-chain-management-database
 
+  ### PMS
+  production-management-system:
+    build:
+      context: ./ProductionManagement/ProductionManagementSystem/
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+
+  ### MQTT Mediator
   mqtt-mediator:
     build:
       context: ./MQTTMediator/
@@ -69,6 +78,7 @@ services:
       - kafka
     restart: on-failure
 
+  ###  Production floor
   robotics:
     build:
       context: ./ProductionFloor/Robotics
@@ -78,6 +88,7 @@ services:
     depends_on:
       - production-broker
 
+  ### Mosquitto
   production-broker:
     image: eclipse-mosquitto:latest
     ports:
