@@ -31,7 +31,7 @@ def on_message(client, userdata, msg):
             else:
                 message_content = "Adding package to warehouse"
 
-        kafka_producer.produce(topic, key=None, value=json.dumps({"timestamp": timestamp, "value":message_content}))
+        kafka_producer.produce(topic, key=None, value=message_content, timestamp=timestamp)
         kafka_producer.flush()
     except Exception as e:
         logger.info(f"Error processing MQTT message: {str(e)}")

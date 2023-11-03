@@ -72,7 +72,7 @@ def consume_production_cycles():
                 analyze_storage_efficiency()
                 add_buckets_to_storage()
                 
-            send_metrics(message.timestamp)
+            send_metrics(message)
 
 def add_buckets_to_storage():
     """Add received buckets into storage."""
@@ -129,11 +129,11 @@ def store_order_delivery_state():
     connection_cursor.execute("""INSERT INTO inventory (order_state) VALUES (%s)""", (order_state,))
     postgres_connection.commit()
     
-def send_metrics(produced_timestamp):
+def send_metrics(message):
     """Send latency metrics to database"""
     
-    produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(produced_timestamp / 1000).isoformat()
-    consumed_timestamp_to_isoformat = datetime.datetime.utcnow().isoformat(timespec='microseconds')
+    produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(message.timestamp()[1]).isoformat(timespec="microseconds")
+    consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat(timespec="microseconds")
     
     logger.info(f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]")
     connection_cursor.execute("""INSERT INTO latency (produced, consumed) VALUES (%s, %s)""", (produced_timestamp_to_isoformat, consumed_timestamp_to_isoformat,))
