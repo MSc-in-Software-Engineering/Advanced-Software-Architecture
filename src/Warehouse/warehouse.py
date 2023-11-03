@@ -132,8 +132,8 @@ def store_order_delivery_state():
 def send_metrics(message):
     """Send latency metrics to database"""
     
-    produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(message.timestamp()[1]).isoformat(timespec="microseconds")
-    consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat(timespec="microseconds")
+    produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(message.timestamp()[1]).isoformat()
+    consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat()
     
     logger.info(f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]")
     connection_cursor.execute("""INSERT INTO latency (produced, consumed) VALUES (%s, %s)""", (produced_timestamp_to_isoformat, consumed_timestamp_to_isoformat,))
