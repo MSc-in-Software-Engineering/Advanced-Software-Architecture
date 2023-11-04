@@ -18,21 +18,22 @@ mqtt_port = 1883
 def on_message(client, userdata, msg):
     try:
         topic = msg.topic
-        message = msg.payload.decode("utf-8")
-        logger.info(f"Received MQTT message on topic {topic}: {message}")
-        json_data = json.loads(message)
-        timestamp = json_data.get("timestamp")
-        message_content = json_data.get("message")
 
         if (topic == "robotic_arms"):
+            message = msg.payload.decode("utf-8")
+            logger.info(f"Received MQTT message on topic {topic}: {message}")
+            json_data = json.loads(message)
+            timestamp = json_data.get("timestamp")
+            message_content = json_data.get("message")
+
             topic = "production-cycle"
             if (message_content == "0"):
                 message_content = "Taking materials from warehouse"
             else:
                 message_content = "Adding package to warehouse"
 
-        kafka_producer.produce(topic, key=None, value=message_content, timestamp=timestamp)
-        kafka_producer.flush()
+            kafka_producer.produce(topic, key=None, value=message_content, timestamp=timestamp)
+            kafka_producer.flush()
     except Exception as e:
         logger.info(f"Error processing MQTT message: {str(e)}")
 

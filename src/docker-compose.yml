@@ -78,7 +78,25 @@ services:
       - kafka
     restart: on-failure
 
-  ###  Production floor
+  ### Production floor
+  iot:
+    build:
+      context: ./ProductionFloor/IoT
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
+  conveyor-belts:
+    build:
+      context: ./ProductionFloor/ConveyorBelts
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - production-broker
+
   robotics:
     build:
       context: ./ProductionFloor/Robotics
@@ -86,6 +104,15 @@ services:
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
+      - production-broker
+
+  ### Metrics analysis
+  metrics-analysis:
+    build:
+      context: ./MetricsAnalysis/
+      dockerfile: Dockerfile
+    depends_on:
+      - kafka
       - production-broker
 
   ### Mosquitto

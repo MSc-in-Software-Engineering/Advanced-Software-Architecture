@@ -1,13 +1,7 @@
 version: "3"
-services:
-  production-broker:
-    image: eclipse-mosquitto:latest
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
+services:
+  ### Kafka
   kafka:
     image: docker.io/bitnami/kafka:3.5
     ports:
@@ -24,6 +18,57 @@ services:
       - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT
 
+  ### Warehouse
+  warehouse:
+    image: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+
+  ### SCM
+  supply-chain-management-database:
+    image: ghcr.io/msc-in-software-engineering/supply_chain_management_database:latest
+    ports:
+      - "5432:5432"
+
+  warehouse-system:
+    image: ghcr.io/msc-in-software-engineering/warehouse_system:latest
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+
+  customer-service:
+    image: ghcr.io/msc-in-software-engineering/customer_service:latest
+    env_file:
+      - ./CustomerService/.env
+    depends_on:
+      - supply-chain-management-database
+
+  ### PMS
+  production-management-system:
+    build:
+      context: ghcr.io/msc-in-software-engineering/production_management_system:latest
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+  
+  ### MQTT Mediator
+  mqtt-mediator:
+    image: ghcr.io/msc-in-software-engineering/mqtt_mediator:latest
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - kafka
+    restart: on-failure
+
+  ### Production floor
   iot:
     image: ghcr.io/msc-in-software-engineering/python_iot_pub:latest
     environment:
@@ -44,28 +89,22 @@ services:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
       - production-broker
-
-  supply-chain-management-database:
-    image: ghcr.io/msc-in-software-engineering/postgres-supply-chain-management-database:latest
-    environment:
-      - MQTT_BROKER_ADDRESS=production-broker
+      
+  ### Metrics analysis
+  metrics-analysis:
+    image: ghcr.io/msc-in-software-engineering/metrics_analysis:latest
     depends_on:
+      - kafka
       - production-broker
 
-  warehouse:
-    image: ghcr.io/msc-in-software-engineering/python_warehouse_pub_sub:latest
-    environment:
-      - KAFKA_BROKER_ADDRESS=kafka
-    depends_on:
-      - kafka
-      - supply-chain-management-database
-
-  warehouse-system:
-    image: ghcr.io/msc-in-software-engineering/ts_warehouse_system_sub:latest
-    environment:
-      - KAFKA_BROKER_ADDRESS=kafka
-    depends_on:
-      - kafka
+  # Mosquitto
+  production-broker:
+    image: eclipse-mosquitto:latest
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
 
 volumes:
   kafka_data:
