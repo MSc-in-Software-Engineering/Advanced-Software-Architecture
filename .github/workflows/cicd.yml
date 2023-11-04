@@ -46,7 +46,8 @@ jobs:
           name: deployment-artifact
           path: |
             ./src/docker-compose.prod.yml
-            ./src/mosquitto.conf
+            ./src/ProductionFloor/mosquitto.conf
+            ./src/CustomerService
 
   # Job to perform static code analysis
   code-analysis:
