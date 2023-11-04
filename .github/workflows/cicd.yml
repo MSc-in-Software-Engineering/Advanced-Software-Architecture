@@ -47,7 +47,7 @@ jobs:
           path: |
             ./src/docker-compose.prod.yml
             ./src/ProductionFloor/mosquitto.conf
-            ./src/CustomerService
+            ./src/CustomerService/.env
 
   # Job to perform static code analysis
   code-analysis:
