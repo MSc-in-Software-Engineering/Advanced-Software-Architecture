@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: ./src
+          path: ./src/
 
   # Job for testing the application i.e
   test-application:
