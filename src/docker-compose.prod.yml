@@ -49,9 +49,7 @@ services:
 
   ### PMS
   production-management-system:
-    build:
-      context: ghcr.io/msc-in-software-engineering/production_management_system:latest
-      dockerfile: Dockerfile
+    image: ghcr.io/msc-in-software-engineering/production_management_system:latest
     environment:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
