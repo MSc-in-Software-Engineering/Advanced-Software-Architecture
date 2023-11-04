@@ -407,10 +407,10 @@ jobs:
           scp -o StrictHostKeyChecking=no -i ./private_key.pem ./src/docker-compose.prod.yml ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
       - name: Transfer ProductionFloor mosquitto config to server for the MQTT production broker
         run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem ./src/ProductionFloor/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
+          scp -o StrictHostKeyChecking=no -i ./private_key.pem ./src/ProductionFloor/mosquitto.conf ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
       - name: Transfer environment file from the CustomerService directory
         run: |
-          scp -o StrictHostKeyChecking=no -i private_key.pem ./src/CustomerService/.env ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
+          scp -o StrictHostKeyChecking=no -i ./private_key.pem ./src/CustomerService/.env ${{ env.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:./
         continue-on-error: true
       - name: Run docker-compose Down on VM
         run: |
