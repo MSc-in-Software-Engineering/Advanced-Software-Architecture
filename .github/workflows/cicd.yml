@@ -321,7 +321,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/ProductionManagement
+          context: ./src/ProductionManagement/ProductionManagementSystem
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_PRODUCTION_MANAGEMENT_SYSTEM }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_PRODUCTION_MANAGEMENT_SYSTEM }}:latest
 
@@ -349,7 +349,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/ProductionManagement
+          context: ./src/MQTTMediator
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_MQTT_MEDIATOR }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_MQTT_MEDIATOR }}:latest
 
@@ -377,7 +377,7 @@ jobs:
       - name: Build & Push image
         uses: docker/build-push-action@v3
         with:
-          context: ./src/ProductionManagement
+          context: ./src/MetricsAnalysis
           push: true
           tags: ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_METRICS_ANALYSIS }}:1.0-${{ github.sha }},ghcr.io/${{ env.OWNER_LOWER }}/${{ env.DOCKER_IMAGE_METRICS_ANALYSIS }}:latest
 
