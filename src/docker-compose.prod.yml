@@ -43,7 +43,7 @@ services:
   customer-service:
     image: ghcr.io/msc-in-software-engineering/customer_service:latest
     env_file:
-      - ./CustomerService/.env
+      - ./.env
     depends_on:
       - supply-chain-management-database
 
