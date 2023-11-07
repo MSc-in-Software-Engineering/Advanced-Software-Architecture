@@ -11,17 +11,6 @@ logger = logging.getLogger("Metrics")
 postgres_connection = psycopg2.connect(database="supplychainmanagement", user="postgres", password="admin", host="supply-chain-management-database", port="5432")
 connection_cursor = postgres_connection.cursor()
 
-connection_cursor.execute('SELECT produced FROM latency;')
-produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
-
-connection_cursor.execute('SELECT consumed FROM latency;')
-consumed_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
-
-produced_datetimes = [datetime.datetime.fromtimestamp(timestamp) for timestamp in produced_timestamps]
-consumed_datetimes = [datetime.datetime.fromtimestamp(timestamp) for timestamp in consumed_timestamps]
-
-time_differences = [(consumed_datetime - produced_datetime).total_seconds() for consumed_datetime, produced_datetime in zip(consumed_datetimes, produced_datetimes)]
-
 def save_plot_to_folder(folder):
     """Save file to folder"""
     
@@ -35,6 +24,16 @@ def save_plot_to_folder(folder):
 
 def timeseries_line_chart():
     """Create timeseries line chart."""
+    connection_cursor.execute('SELECT produced FROM latency;')
+    produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
+
+    connection_cursor.execute('SELECT consumed FROM latency;')
+    consumed_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
+
+    produced_datetimes = [datetime.datetime.fromtimestamp(timestamp) for timestamp in produced_timestamps]
+    consumed_datetimes = [datetime.datetime.fromtimestamp(timestamp) for timestamp in consumed_timestamps]
+
+    time_differences = [(consumed_datetime - produced_datetime).total_seconds() for consumed_datetime, produced_datetime in zip(consumed_datetimes, produced_datetimes)]
     
     fig, ax = plt.subplots()
     
@@ -48,8 +47,9 @@ def timeseries_line_chart():
     
     save_plot_to_folder("timeseries")
     
-while(True):
-    sleep(600)
     mean_time = sum(time_differences) / len(time_differences)
     logger.info(f'Mean is: {mean_time}')
+    
+while(True):
+    sleep(600)
     timeseries_line_chart()
