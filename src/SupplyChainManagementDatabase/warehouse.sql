@@ -10,6 +10,12 @@ CREATE TABLE latency (
     consumed TIMESTAMP NOT NULL
 );
 
+CREATE TABLE mqttlatency (
+    id SERIAL PRIMARY KEY, 
+    produced TIMESTAMP NOT NULL, 
+    consumed TIMESTAMP NOT NULL
+);
+
 CREATE TABLE inventory (
     id SERIAL PRIMARY KEY, 
     order_state VARCHAR(255) NOT NULL, 

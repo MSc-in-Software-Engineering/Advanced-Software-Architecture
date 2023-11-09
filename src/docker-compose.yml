@@ -29,6 +29,17 @@ services:
       - kafka
       - supply-chain-management-database
 
+  ### Warehouse
+  mqtt-warehouse:
+    build:
+      context: ./MQTTWarehouse/
+      dockerfile: Dockerfile
+    environment:
+      - MQTT_BROKER_ADDRESS=production-broker
+    depends_on:
+      - supply-chain-management-database
+      - production-broker
+
   ### SCM
   supply-chain-management-database:
     build:
