@@ -67,10 +67,9 @@ class KafkaConnector
                 while (true)
                 {
                     var result = consumer.Consume();
-                    if (topic == "capacity_event")
+                    if (topic == "capacity")
                     {
                         db.updateInventory(result.Message.Value);
-
                     }
                     else
                     {
@@ -85,6 +84,59 @@ class KafkaConnector
         }
     }
 
+    public void ScheduleTimeFromProduct(string kafkaServers, string topic)
+    {
+        var kafkaConf = new ConsumerConfig
+        {
+            BootstrapServers = kafkaServers,
+            GroupId = "inventory-consumer-group",
+            AutoOffsetReset = AutoOffsetReset.Earliest
+        };
+
+        using (var consumer = new ConsumerBuilder<Ignore, string>(kafkaConf).Build())
+        {
+            consumer.Subscribe(topic);
+            Console.WriteLine($"Consuming messages from topic: {topic}");
+            try
+            {
+                while (true)
+                {
+                    var result = consumer.Consume();
+                    if (result.Message.Value == "Processing")
+                    {
+                        Console.WriteLine($"[{DateTime.Now}] Scheduling System: Production state: '{result.Message.Value}'");
+
+                    }
+                    else if (result.Message.Value == "Packed")
+                    {
+                        Console.WriteLine($"[{DateTime.Now}] Scheduling System: Production state: '{result.Message.Value}'");
+                    }
+                }
+            }
+            catch (ConsumeException e)
+            {
+                Console.WriteLine($"Error consume from kafka topic: {e.Error}");
+            }
+        }
+    }
+
+}
+
+class SchedulingSystem {
+    KafkaConnector kf = new KafkaConnector();
+    string kafkaServers = Environment.GetEnvironmentVariable("KAFKA_BROKER_ADDRESS");
+    string kafkaTopic1 = "inventory_event";
+
+    public void ProductionScheduleState() {
+        if (!string.IsNullOrEmpty(kafkaServers))
+        {
+            kf.ScheduleTimeFromProduct(kafkaServers, kafkaTopic1);
+        }
+        else
+        {
+            Console.WriteLine("kafka adress not found");
+        }
+    }
 }
 
 class Program
@@ -97,7 +149,10 @@ class Program
         KafkaConnector kf = new KafkaConnector();
         string kafkaServers = Environment.GetEnvironmentVariable("KAFKA_BROKER_ADDRESS");
         string kafkaTopic1 = "inventory";
-        string kafkaTopic2 = "capacity_event";
+        string kafkaTopic2 = "capacity";
+
+        SchedulingSystem ss = new SchedulingSystem();
+        ss.ProductionScheduleState();
 
         if (!string.IsNullOrEmpty(kafkaServers))
         {
