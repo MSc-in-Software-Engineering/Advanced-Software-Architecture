@@ -10,10 +10,21 @@ CREATE TABLE latency (
     consumed TIMESTAMP NOT NULL
 );
 
+CREATE TABLE exactlatency (
+    id SERIAL PRIMARY KEY, 
+    time_diff INT NOT NULL
+);
+
+
 CREATE TABLE mqttlatency (
     id SERIAL PRIMARY KEY, 
     produced TIMESTAMP NOT NULL, 
     consumed TIMESTAMP NOT NULL
+);
+
+CREATE TABLE exactmqttlatency (
+    id SERIAL PRIMARY KEY, 
+    time_diff INT NOT NULL
 );
 
 CREATE TABLE inventory (

@@ -8,6 +8,7 @@ import json
 import datetime
 from time import sleep
 import paho.mqtt.client as mqtt
+import threading
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("MQTTWarehouse")
@@ -23,8 +24,7 @@ connection_cursor = postgres_connection.cursor()
 
 mqtt_broker = os.environ.get("MQTT_BROKER_ADDRESS", "localhost")
 mqtt_port = 1883
-
-
+    
 def on_message(client, userdata, msg):
     try:
         if len(buckets) != 0:
@@ -45,6 +45,16 @@ def on_message(client, userdata, msg):
 
 capacity = None
 buckets = []
+
+count = 0
+
+def counter():
+    # Counter to count one up, and append to the count variable
+ 
+    while True:
+        count += 1
+        logger.info(f"Counter is [{[count]}]")
+        sleep(1)
 
 
 def produce_bucket_notification():
@@ -100,8 +110,9 @@ def store_order_delivery_state():
 
 
 def send_metrics(message):
+    global count
+    
     """Send latency metrics to database"""
-
     json_data = json.loads(message.payload.decode("utf-8"))
     timestamp = json_data.get("timestamp")
     produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(
@@ -110,6 +121,12 @@ def send_metrics(message):
     consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat(
         timespec="seconds"
     )
+    
+    logger.info(f"Exact time difference [{count}] seconds")
+    connection_cursor.execute("""INSERT INTO exactmqttlatency (time_diff) VALUES (%s)""", (count,))
+    postgres_connection.commit()
+    count = 0
+    logger.info(f"Counter has been reset [{[count]}]")
 
     logger.info(
         f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]"
@@ -148,3 +165,6 @@ except KeyboardInterrupt:
 finally:
     client.disconnect()
     client.loop_stop()
+
+counter_thread = threading.Thread(target=counter)
+counter_thread.start()

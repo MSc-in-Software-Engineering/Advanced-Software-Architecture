@@ -7,6 +7,7 @@ import psycopg2
 import datetime
 from time import sleep
 from confluent_kafka import Producer, Consumer
+import threading
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("Warehouse")
@@ -30,7 +31,17 @@ kafka_consumer.subscribe([kafka_consumer_topic])
 
 capacity = None
 buckets = []
+count = 0
 
+ 
+def counter():
+    # Counter to count one up, and append to the count variable
+
+    while True:
+        count += 1
+        logger.info(f"Counter is [{count:.2f}]")  
+        sleep(1)
+    
 
 def produce_bucket_notification():
     """Produce event to the warehouse topic that states a bucket is available in the warehouse for pickup."""
@@ -131,14 +142,22 @@ def store_order_delivery_state():
     
 def send_metrics(message):
     """Send latency metrics to database"""
+    global count
     
     produced_timestamp_to_isoformat = datetime.datetime.fromtimestamp(message.timestamp()[1]).isoformat()
     consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat(timespec="seconds")
     
+    logger.info(f"Exact time difference [{count}] seconds")
+    connection_cursor.execute("""INSERT INTO exactlatency (time_diff) VALUES (%s)""", (count,))
+    postgres_connection.commit()
+    count = 0
+    logger.info(f"Counter has been reset [{[count]}]")
+    
     logger.info(f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]")
     connection_cursor.execute("""INSERT INTO latency (produced, consumed) VALUES (%s, %s)""", (produced_timestamp_to_isoformat, consumed_timestamp_to_isoformat,))
     postgres_connection.commit()
- 
+    
+
 add_buckets_to_storage()
 logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
 
@@ -147,3 +166,6 @@ produce_bucket_notification()
 
 # Listening to production cycle events until warehouse is empty of buckets.
 consume_production_cycles()
+
+counter_thread = threading.Thread(target=counter)
+counter_thread.start()
