@@ -29,17 +29,6 @@ services:
       - kafka
       - supply-chain-management-database
 
-  ### Warehouse
-  mqtt-warehouse:
-    build:
-      context: ./MQTTWarehouse/
-      dockerfile: Dockerfile
-    environment:
-      - MQTT_BROKER_ADDRESS=production-broker
-    depends_on:
-      - supply-chain-management-database
-      - production-broker
-
   ### SCM
   supply-chain-management-database:
     build:
@@ -47,35 +36,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "5432:5432"
-
-  warehouse-system:
-    build:
-      context: ./WarehouseSystem/
-      dockerfile: Dockerfile
-    environment:
-      - KAFKA_BROKER_ADDRESS=kafka
-    depends_on:
-      - kafka
-
-  customer-service:
-    build:
-      context: ./CustomerService
-      dockerfile: Dockerfile
-    env_file:
-      - ./CustomerService/.env
-    depends_on:
-      - supply-chain-management-database
-
-  ### PMS
-  production-management-system:
-    build:
-      context: ./ProductionManagement/ProductionManagementSystem/
-      dockerfile: Dockerfile
-    environment:
-      - KAFKA_BROKER_ADDRESS=kafka
-    depends_on:
-      - kafka
-      - supply-chain-management-database
 
   ### MQTT Mediator
   mqtt-mediator:
@@ -90,24 +50,6 @@ services:
     restart: on-failure
 
   ### Production floor
-  iot:
-    build:
-      context: ./ProductionFloor/IoT
-      dockerfile: Dockerfile
-    environment:
-      - MQTT_BROKER_ADDRESS=production-broker
-    depends_on:
-      - production-broker
-
-  conveyor-belts:
-    build:
-      context: ./ProductionFloor/ConveyorBelts
-      dockerfile: Dockerfile
-    environment:
-      - MQTT_BROKER_ADDRESS=production-broker
-    depends_on:
-      - production-broker
-
   robotics:
     build:
       context: ./ProductionFloor/Robotics

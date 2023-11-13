@@ -8,7 +8,6 @@ import json
 import datetime
 from time import sleep
 import paho.mqtt.client as mqtt
-import threading
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("MQTTWarehouse")
@@ -45,17 +44,6 @@ def on_message(client, userdata, msg):
 
 capacity = None
 buckets = []
-
-count = 0
-
-def counter():
-    # Counter to count one up, and append to the count variable
- 
-    while True:
-        count += 1
-        logger.info(f"Counter is [{[count]}]")
-        sleep(1)
-
 
 def produce_bucket_notification():
     """Produce event to the warehouse topic that states a bucket is available in the warehouse for pickup."""
@@ -110,8 +98,6 @@ def store_order_delivery_state():
 
 
 def send_metrics(message):
-    global count
-    
     """Send latency metrics to database"""
     json_data = json.loads(message.payload.decode("utf-8"))
     timestamp = json_data.get("timestamp")
@@ -121,12 +107,6 @@ def send_metrics(message):
     consumed_timestamp_to_isoformat = datetime.datetime.now().isoformat(
         timespec="seconds"
     )
-    
-    logger.info(f"Exact time difference [{count}] seconds")
-    connection_cursor.execute("""INSERT INTO exactmqttlatency (time_diff) VALUES (%s)""", (count,))
-    postgres_connection.commit()
-    count = 0
-    logger.info(f"Counter has been reset [{[count]}]")
 
     logger.info(
         f"Message was produced at [{produced_timestamp_to_isoformat}] and consumed at [{consumed_timestamp_to_isoformat}]"
@@ -165,6 +145,3 @@ except KeyboardInterrupt:
 finally:
     client.disconnect()
     client.loop_stop()
-
-counter_thread = threading.Thread(target=counter)
-counter_thread.start()

@@ -30,12 +30,53 @@ def save_plot_to_folder(folder, number):
     print(f"Plot saved as {filepath}")
 
 
-def timeseries_line_chart():
-    """Create timeseries line chart."""
-    connection_cursor.execute("SELECT produced FROM latency;")
+def line_chart(table, number, title):
+    try:
+        """Create timeseries line chart."""
+        connection_cursor.execute(f"SELECT produced FROM {table};")
+        produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
+
+        connection_cursor.execute(f"SELECT consumed FROM {table};")
+        consumed_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
+
+        produced_datetimes = [
+            datetime.datetime.fromtimestamp(timestamp) for timestamp in produced_timestamps
+        ]
+        consumed_datetimes = [
+            datetime.datetime.fromtimestamp(timestamp) for timestamp in consumed_timestamps
+        ]
+
+        time_differences = [
+            (consumed_datetime - produced_datetime).total_seconds()
+            for consumed_datetime, produced_datetime in zip(
+                consumed_datetimes, produced_datetimes
+            )
+        ]
+
+        fig, ax = plt.subplots()
+
+        ax.plot(produced_datetimes, time_differences, color="blue", marker="o")
+
+        ax.set_title("Time Difference Between Produced and Consumed Events")
+        ax.set_xlabel("Timestamp")
+        ax.set_ylabel("Time Difference (Seconds)")
+
+        plt.xticks(rotation=45)
+
+        save_plot_to_folder("linechart", number)
+
+        mean_time = sum(time_differences) / len(time_differences)
+        logger.info(f"{title} Mean is: {mean_time}")
+    except ZeroDivisionError:
+        pass
+    
+    
+def box_plot(table, number):
+    """Create timeseries boxplot."""
+    connection_cursor.execute(f"SELECT produced FROM {table};")
     produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
 
-    connection_cursor.execute("SELECT consumed FROM latency;")
+    connection_cursor.execute(f"SELECT consumed FROM {table};")
     consumed_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
 
     produced_datetimes = [
@@ -54,59 +95,17 @@ def timeseries_line_chart():
 
     fig, ax = plt.subplots()
 
-    ax.plot(produced_datetimes, time_differences, color="blue", marker="o")
+    ax.boxplot(time_differences)
 
     ax.set_title("Time Difference Between Produced and Consumed Events")
-    ax.set_xlabel("Timestamp")
-    ax.set_ylabel("Time Difference (Seconds)")
+    ax.set_xlabel("Time Difference (Seconds)")
 
-    plt.xticks(rotation=45)
-
-    save_plot_to_folder("timeseries", 0)
-
-    mean_time = sum(time_differences) / len(time_differences)
-    logger.info(f"Kafka Mean is: {mean_time}")
-
-
-def timeseries_2_line_chart():
-    """Create timeseries line chart."""
-    connection_cursor.execute("SELECT produced FROM mqttlatency;")
-    produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
-
-    connection_cursor.execute("SELECT consumed FROM mqttlatency;")
-    consumed_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
-
-    produced_datetimes = [
-        datetime.datetime.fromtimestamp(timestamp) for timestamp in produced_timestamps
-    ]
-    consumed_datetimes = [
-        datetime.datetime.fromtimestamp(timestamp) for timestamp in consumed_timestamps
-    ]
-
-    time_differences = [
-        (consumed_datetime - produced_datetime).total_seconds()
-        for consumed_datetime, produced_datetime in zip(
-            consumed_datetimes, produced_datetimes
-        )
-    ]
-
-    fig, ax = plt.subplots()
-
-    ax.plot(produced_datetimes, time_differences, color="blue", marker="o")
-
-    ax.set_title("Time Difference Between Produced and Consumed Events")
-    ax.set_xlabel("Timestamp")
-    ax.set_ylabel("Time Difference (Seconds)")
-
-    plt.xticks(rotation=45)
-
-    save_plot_to_folder("timeseries", 1)
-
-    mean_time = sum(time_differences) / len(time_differences)
-    logger.info(f"MQTT Mean is: {mean_time}")
+    save_plot_to_folder("boxplot", number)
 
 
 while True:
-    sleep(600)
-    timeseries_line_chart()
-    timeseries_2_line_chart()
+    sleep(200)
+    line_chart("latency", 0, "Kafka")
+    line_chart("mqttlatency", 1, "MQTT")
+    box_plot("latency", 0)
+    box_plot("mqttlatency", 1)
