@@ -26,6 +26,8 @@ mqtt_port = 1883
     
 def on_message(client, userdata, msg):
     try:
+        send_metrics(msg)
+        
         if len(buckets) != 0:
             produce_bucket_notification()
             logger.info(f"Warehouse has [{len(buckets)}] bucket(s) in storage...")
@@ -37,7 +39,6 @@ def on_message(client, userdata, msg):
             )
             analyze_storage_efficiency()
             add_buckets_to_storage()
-        send_metrics(msg)
     except Exception as e:
         logger.info(f"Error processing MQTT message: {str(e)}")
 

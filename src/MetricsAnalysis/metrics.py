@@ -63,7 +63,7 @@ def line_chart(table, number, title):
 
         plt.xticks(rotation=45)
 
-        save_plot_to_folder("linechart", number)
+        save_plot_to_folder(f"linechart/{title}", number)
 
         mean_time = sum(time_differences) / len(time_differences)
         logger.info(f"{title} Mean is: {mean_time}")
@@ -71,7 +71,7 @@ def line_chart(table, number, title):
         pass
     
     
-def box_plot(table, number):
+def box_plot(table, number, title):
     """Create timeseries boxplot."""
     connection_cursor.execute(f"SELECT produced FROM {table};")
     produced_timestamps = [row[0].timestamp() for row in connection_cursor.fetchall()]
@@ -100,12 +100,12 @@ def box_plot(table, number):
     ax.set_title("Time Difference Between Produced and Consumed Events")
     ax.set_xlabel("Time Difference (Seconds)")
 
-    save_plot_to_folder("boxplot", number)
+    save_plot_to_folder(f"boxplot/{title}", number)
 
 
 while True:
-    sleep(200)
+    sleep(600)
     line_chart("latency", 0, "Kafka")
     line_chart("mqttlatency", 1, "MQTT")
-    box_plot("latency", 0)
-    box_plot("mqttlatency", 1)
+    box_plot("latency", 0, "Kafka")
+    box_plot("mqttlatency", 1, "MQTT")
