@@ -19,3 +19,5 @@ To run the CI/CD workflow from commit to deployment and release, ensure that the
 The VM utilized for this repository in which deployment is being made is on the machine **_bds-g01-n1_**.
 
 At last, ensure that a VPN connection to SDU's network is established.
+
+[Customer Service Subsystem](src/CustomerService/)

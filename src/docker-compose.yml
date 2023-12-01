@@ -88,6 +88,13 @@ services:
     volumes:
       - ./ProductionFloor/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
+  customer-service:
+    build:
+      context: ./CustomerService
+      dockerfile: Dockerfile
+    depends_on:
+      - supply-chain-management-database
+
 volumes:
   kafka_data:
     driver: local

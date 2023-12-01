@@ -30,7 +30,7 @@ async function startCLI() {
 
 async function supplyChainData() {
     console.info("What kind of data are you looking for?");
-    const choice = await promptly.choose("Enter your choice [w - Warehouse data, l - Latency data, i - Inventory daya, n - None]: ", ["w", "l", "i", "n"]);
+    const choice = await promptly.choose("Enter your choice [w - Warehouse data, l - Latency data, i - Inventory data, n - None]: ", ["w", "l", "i", "n"]);
     if (choice === "w") {
         console.info("Displaying Warehouse data");
         const data = await fetchWarehouseData();
