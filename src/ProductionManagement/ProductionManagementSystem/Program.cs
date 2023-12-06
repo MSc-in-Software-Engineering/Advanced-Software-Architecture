@@ -128,7 +128,7 @@ class SchedulingSystem
 {
     KafkaConnector kf = new KafkaConnector();
     string kafkaServers = Environment.GetEnvironmentVariable("KAFKA_BROKER_ADDRESS");
-    string kafkaTopic1 = "inventory_event";
+    string kafkaTopic1 = "inventory";
 
     public void ProductionScheduleState()
     {
