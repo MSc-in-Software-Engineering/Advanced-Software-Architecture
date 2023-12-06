@@ -12,7 +12,7 @@
 
 Code for each of the services within the infrastructure are in the folder **_src_**.
 
-Additionally two compose files has been created, one utilized for the CI/CD workflow **_(docker-compose.prod.yml)_** and one for local usage **(docker-compose.yml)**.
+Additionally three compose files has been created, one utilized for the CI/CD workflow [docker-compose.prod.yml](src/docker-compose.prod.yml), one for local usage [docker-compose.yml](src/docker-compose.yml)* and one for experimental purposes [docker-compose.test.yml](src/docker-compose.test.yml).
 
 To run the CI/CD workflow from commit to deployment and release, ensure that the self-runner for the deployment step is running on the local machine. Beware that you might need to authorize [GitHub container registry](https://www.andrewhoog.com/post/authorizing-github-container-registry/).
 
