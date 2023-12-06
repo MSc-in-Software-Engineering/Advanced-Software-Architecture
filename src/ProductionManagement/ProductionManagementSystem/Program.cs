@@ -1,7 +1,7 @@
 ﻿using Npgsql;
 using Confluent.Kafka;
 
-
+// Database connection to retrieve and insert values
 public class Database
 {
     private string databaseConnection = "Host=supply-chain-management-database;Port=5432;Username=postgres;Password=admin;Database=supplychainmanagement;";
@@ -46,6 +46,7 @@ public class Database
     }
 }
 
+// Kafka connector to consume values from specific topics
 class KafkaConnector
 {
     Database db = new Database();
@@ -122,12 +123,15 @@ class KafkaConnector
 
 }
 
-class SchedulingSystem {
+// The scheduling system
+class SchedulingSystem
+{
     KafkaConnector kf = new KafkaConnector();
     string kafkaServers = Environment.GetEnvironmentVariable("KAFKA_BROKER_ADDRESS");
     string kafkaTopic1 = "inventory_event";
 
-    public void ProductionScheduleState() {
+    public void ProductionScheduleState()
+    {
         if (!string.IsNullOrEmpty(kafkaServers))
         {
             kf.ScheduleTimeFromProduct(kafkaServers, kafkaTopic1);
@@ -146,11 +150,14 @@ class Program
         Database db = new Database();
         Console.WriteLine("PRODUCTION MANAGEMENT SYSTEM RUNNING");
 
+        // Inventory management system
         KafkaConnector kf = new KafkaConnector();
         string kafkaServers = Environment.GetEnvironmentVariable("KAFKA_BROKER_ADDRESS");
         string kafkaTopic1 = "inventory";
         string kafkaTopic2 = "capacity";
 
+
+        //Scheduling system
         SchedulingSystem ss = new SchedulingSystem();
         ss.ProductionScheduleState();
 
@@ -167,7 +174,6 @@ class Program
 
         while (true)
         {
-            //todo
             db.getInventoryData();
         }
     }
