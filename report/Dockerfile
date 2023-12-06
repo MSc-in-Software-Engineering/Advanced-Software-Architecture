@@ -13,6 +13,9 @@ RUN apt-get update -q && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
+RUN tlmgr update --self && \
+  tlmgr install --reinstall --all
+
 COPY ./latexUtils/compile.sh .
 RUN sed -i 's/\r$//' compile.sh
 RUN chmod +x compile.sh
