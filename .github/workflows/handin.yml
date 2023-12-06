@@ -140,9 +140,9 @@ jobs:
 
       - name: Install Additional LaTeX Packages
         run: |
-          sudo tlmgr update --self
-          sudo tlmgr install --reinstall --all
-          
+          tlmgr update --self
+          tlmgr install --reinstall --all
+
       # Compile the main.tex file
       - name: Compile LaTeX document
         run: |
