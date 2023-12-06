@@ -18,6 +18,8 @@ on:
     paths:
       - "report/GroupTemplate/**"
       - "report/ReflectionsTemplate/**"
+  workflow_dispatch:
+  
 
   # Environment Variables
 env:
