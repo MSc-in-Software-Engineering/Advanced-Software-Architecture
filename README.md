@@ -32,6 +32,7 @@ Navigation to each of the subsystems that are part of the overall architecture.
 - [Productions floor: Robotics](src/ProductionFloor/Robotics/)
 - [Productions floor: IoT](src/ProductionFloor/IoT/)
 - [Productions floor: ConveyorBelts](src/ProductionFloor/ConveyorBelts/)
+- [Production Management System](src/ProductionManagement/ProductionManagementSystem)
 - [Monitoring Subsystem](src/MonitoringSystem/)
 - [Metrics Analysis](src/MetricsAnalysis/)
 - [SupplyChainManagementDatabase](srcSupplyChainManagementDatabase/)
