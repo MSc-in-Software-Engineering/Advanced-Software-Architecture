@@ -24,3 +24,4 @@ At last, ensure that a VPN connection to SDU's network is established.
 [MQTT Mediator](src/MQTTMediator/)
 [MQTT Warehouse](src/MQTTWarehouse/)
 [Productions floor: Robotics](src/ProductionFloor/Robotics/)
+[Monitoring Subsystem](src/MonitoringSystem/)
