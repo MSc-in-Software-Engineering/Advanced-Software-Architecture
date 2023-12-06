@@ -132,8 +132,6 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive texlive-science
-          sudo tlmgr update --self
-          sudo tlmgr install --reinstall --all
 
       - name: Install LaTeX texlive-xetex Extension
         run: |
@@ -143,6 +141,8 @@ jobs:
       - name: Compile LaTeX document
         run: |
           cd report/GroupTemplate
+          sudo tlmgr update --self
+          sudo tlmgr install --reinstall --all
           xelatex -synctex=1 -interaction=nonstopmode main.tex
       # Rename and move the compiled file to handin folder in root
       - name: Rename compiled PDF
