@@ -1,6 +1,6 @@
 # Advanced Software Architecture
 
-## About
+## 1. About
 
 - Group: **_Group 1_**
 - Domain: **_Industry 4.0 production_**
@@ -8,7 +8,7 @@
 - System: **_Cyber-physical system_**
 - Supply chain: **_Collect used Lego bricks, sort accordingly for recyclable usage, and distribute in packages to customers._**
 
-## Source code and CI/CD workflow
+## 2. Source code and CI/CD workflow
 
 Code for each of the services within the infrastructure are in the folder **_src_**.
 
@@ -20,7 +20,29 @@ The VM utilized for this repository in which deployment is being made is on the 
 
 At last, ensure that a VPN connection to SDU's network is established.
 
-[Customer Service Subsystem](src/CustomerService/)
-[MQTT Mediator](src/MQTTMediator/)
-[MQTT Warehouse](src/MQTTWarehouse/)
-[Productions floor: Robotics](src/ProductionFloor/Robotics/)
+## 3. Running the production system
+
+To run the production system, there are three routes that can be followed, depending on the scenario.
+
+1. In production, the [docker-compose.prod.yml](src/docker-compose.prod.yml) file is being used and localizes published images from the GitHub registry.
+
+2. For local purposes, the [docker-compose.yml](src/docker-compose.yml) file is being used. which both configures and builds the images needed to deploy the production system.
+
+3. For testing purposes, the [docker-compose.test.yml](src/docker-compose.test.yml) file is being used. which is similar to the localized setup; however, it constitutes additional services for testing performance.
+
+## 4. Provided subsystems
+
+Navigation to each of the subsystems that are part of the overall architecture.
+
+- [Warehouse](src/Warehouse/)
+- [WarehouseSystem](src/WarehouseSystem/)
+- [Customer Service Subsystem](src/CustomerService/)
+- [MQTT Mediator](src/MQTTMediator/)
+- [MQTT Warehouse](src/MQTTWarehouse/)
+- [Productions floor: Robotics](src/ProductionFloor/Robotics/)
+- [Productions floor: IoT](src/ProductionFloor/IoT/)
+- [Productions floor: ConveyorBelts](src/ProductionFloor/ConveyorBelts/)
+- [Production Management System](src/ProductionManagement/ProductionManagementSystem)
+- [Monitoring Subsystem](src/MonitoringSystem/)
+- [Metrics Analysis](src/MetricsAnalysis/)
+- [SupplyChainManagementDatabase](srcSupplyChainManagementDatabase/)
