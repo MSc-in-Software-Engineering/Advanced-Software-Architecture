@@ -1,36 +1,16 @@
-Mongodb is setup for the monitoring system by following these steps:
+# Monitoring System
+The monitoring subsystem is a colour sorting components which stores the color sorted data of the lego bricks in a mongodb database.
 
-1. Install mongodb
-sudo apt install mongodb
+To make sure that mongodb is up and running,
 
-2. Start the mongodb service
+Start the mongodb service
 sudo systemctl start mongodb
 
-3. Enable mongoDB to start on boot
-sudo systemctl enable mongodb
 
-4. Verify that MongoDB is running without errors
-sudo systemctl status mongodb
+The username and password for the database is
 
-5. Interact with MongoDB, using the "mongo" shell
-mongo
-
-6. Create a new database
-use brickmonitoringdb
-
-7. Create a collection to store data
-db.createCollection("brickcount")
-
-8. Setting up mongodb authentication
-use admin
-db.createUser({
-  user: "user",
-  pwd: "password",
-  roles: [
-    { role: "readWrite", db: "brickmonitoringdb" }
-  ]
-})
-
+username: "user",
+password: "password"
 
 
 
