@@ -95,6 +95,16 @@ services:
     depends_on:
       - kafka
       - supply-chain-management-database
+
+  scheduling-management-system:
+    build:
+      context: ./ProductionManagement/SchedulingSystem
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
   
   customer-service:
     build:

@@ -55,6 +55,15 @@ services:
     depends_on:
       - kafka
       - supply-chain-management-database
+
+   ### PMS
+  scheduling-management-system:
+    image: ghcr.io/msc-in-software-engineering/scheduling_management_system:latest
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
   
   ### MQTT Mediator
   mqtt-mediator:
