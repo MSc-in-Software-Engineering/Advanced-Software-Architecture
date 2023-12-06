@@ -137,12 +137,16 @@ jobs:
         run: |
           sudo apt-get install -y texlive-xetex
           mkdir handin/
+
+      - name: Install Additional LaTeX Packages
+        run: |
+          sudo tlmgr update --self
+          sudo tlmgr install --reinstall --all
+          
       # Compile the main.tex file
       - name: Compile LaTeX document
         run: |
           cd report/GroupTemplate
-          sudo tlmgr update --self
-          sudo tlmgr install --reinstall --all
           xelatex -synctex=1 -interaction=nonstopmode main.tex
       # Rename and move the compiled file to handin folder in root
       - name: Rename compiled PDF
