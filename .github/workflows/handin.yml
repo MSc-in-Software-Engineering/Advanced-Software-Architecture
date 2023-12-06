@@ -132,6 +132,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y texlive texlive-science
+          sudo tlmgr update --self
+          sudo tlmgr install --reinstall --all
 
       - name: Install LaTeX texlive-xetex Extension
         run: |
