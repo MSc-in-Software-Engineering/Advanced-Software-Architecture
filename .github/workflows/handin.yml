@@ -1,4 +1,5 @@
-name: Handin workflow
+name:
+  Handin workflow
 
   # Workflow triggers
 on:
@@ -6,23 +7,23 @@ on:
     branches:
       - main
       - master
-  # If specific files change
+    # If specific files change
     paths:
-      - 'report/GroupTemplate/**'
-      - 'report/ReflectionsTemplate/**'
+      - "report/GroupTemplate/**"
+      - "report/ReflectionsTemplate/**"
   pull_request:
     branches:
       - main
       - master
     paths:
-      - 'report/GroupTemplate/**'
-      - 'report/ReflectionsTemplate/**'
+      - "report/GroupTemplate/**"
+      - "report/ReflectionsTemplate/**"
 
   # Environment Variables
 env:
   DOCKER_IMAGE_NAME: lowercase-image-name
-  PROJECT_NAME: ProjectName
-  GROUP_NUMBER: GroupNumber #I.e  Group02 
+  PROJECT_NAME: LegoRecycling
+  GROUP_NUMBER: Group01
 
 jobs:
   # Create artifact of repository source code to use for consistensy accross all jobs
@@ -30,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       packages: write
-      contents: read 
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.0.0
@@ -45,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: clone-repository
     permissions:
-      contents: read 
+      contents: read
     # Allow continuation of pipeline if linting fails
     continue-on-error: true
     steps:
@@ -74,20 +75,20 @@ jobs:
           path: .
       # Your logic for building the applicaiton, language dependent
       - name: Build application
-        run:  echo "build app"
+        run: echo "build app"
       # Upload compiled artifact
       - name: Upload Build artifact
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
           path: ./src # Replace with path to your compiled artifact
-  
-  # Job for testing the application i.e 
+
+  # Job for testing the application i.e
   test-application:
     runs-on: ubuntu-latest
-    needs: [build-application,code-analysis]
+    needs: [build-application, code-analysis]
     permissions:
-      contents: read 
+      contents: read
     # Allow pipeline to continue on error in test-application step
     continue-on-error: true
     steps:
@@ -105,13 +106,13 @@ jobs:
       - name: Test application
         run: echo "run tests on build artifact"
 
-  # Job for compiling groupReport-PDF from latex source files and uploading as artifact 
+  # Job for compiling groupReport-PDF from latex source files and uploading as artifact
   compile-latex-groupReport:
     runs-on: ubuntu-latest
     needs: clone-repository
     permissions:
       packages: write
-      contents: read 
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.0.0
@@ -145,21 +146,20 @@ jobs:
       - name: Rename compiled PDF
         run: |
           mv report/GroupTemplate/main.pdf handin/report${{ env.GROUP_NUMBER }}.pdf
-      
+
       - name: Upload GroupReport-pdf artifact
         uses: actions/upload-artifact@v3
         with:
-          name: GroupReport-pdf 
+          name: GroupReport-pdf
           path: handin/
 
-      
-   # Job for compiling and uploading reflections-PDF from latex source files
+    # Job for compiling and uploading reflections-PDF from latex source files
   compile-latex-reflections:
     runs-on: ubuntu-latest
     needs: clone-repository
     permissions:
       packages: write
-      contents: read 
+      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.0.0
@@ -195,17 +195,18 @@ jobs:
       - name: Rename compiled PDF
         run: |
           mv report/ReflectionsTemplate/main.pdf handin/reflections${{ env.GROUP_NUMBER}}.pdf
-  
+
       - name: Upload Reflections-pdf artifact
         uses: actions/upload-artifact@v3
         with:
           name: Reflections-pdf
           path: handin/
-  
+
   # Job for creating handin artifact, this zip file will contain your repo, groupreportPDF, reflectionsPDF and build artifact if any
   upload-handin-artifacts:
     runs-on: ubuntu-latest
-    needs: [build-application,compile-latex-groupReport,compile-latex-reflections]
+    needs:
+      [build-application, compile-latex-groupReport, compile-latex-reflections]
     steps:
       # Download Repo
       - name: Download repository artifact

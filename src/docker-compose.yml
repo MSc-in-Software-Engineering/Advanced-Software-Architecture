@@ -61,7 +61,7 @@ services:
 
   iot:
     build:
-      context: ./IoT
+      context: ./ProductionFloor/IoT
       dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
@@ -70,7 +70,7 @@ services:
 
   conveyor-belts:
     build:
-      context: ./ConveyorBelts
+      context: ./ProductionFloor/ConveyorBelts
       dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
@@ -85,7 +85,17 @@ services:
       - "9001:9001"
     volumes:
       - ./ProductionFloor/mosquitto.conf:/mosquitto/config/mosquitto.conf
-
+  
+  production-management-system:
+    build:
+      context: ./ProductionManagement/ProductionManagementSystem
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+  
   customer-service:
     build:
       context: ./CustomerService

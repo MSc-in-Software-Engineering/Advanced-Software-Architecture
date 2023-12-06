@@ -72,7 +72,7 @@ services:
 
   iot:
     build:
-      context: ./IoT
+      context: ./ProductionFloor./IoT
       dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
@@ -81,12 +81,23 @@ services:
 
   conveyor-belts:
     build:
-      context: ./ConveyorBelts
+      context: ./ProductionFloor/ConveyorBelts
       dockerfile: Dockerfile
     environment:
       - MQTT_BROKER_ADDRESS=production-broker
     depends_on:
       - production-broker
+
+  production-management-system:
+    build:
+      context: ./ProductionManagement/ProductionManagementSystem
+      dockerfile: Dockerfile
+    environment:
+      - KAFKA_BROKER_ADDRESS=kafka
+    depends_on:
+      - kafka
+      - supply-chain-management-database
+  
 
   ### Metrics analysis
   metrics-analysis:

@@ -1,0 +1,24 @@
+\section{Use Case and Quality Attribute Scenario}
+\label{sec:use_case_and_qas}
+This section introduces the use case and the specified quality attributes scenarios it entails. Based on the problem specification, the use case is described to provide a system concept that can help solve it. The quality attributes are developed based on the use case. This section defines and specifies the architectural requirements.
+
+\subsection{Use case}
+\label{sec:use_case}
+The objective of the use case is to facilitate the resolution of the problem. The problem centers around the architectural tradeoffs of different subsystem configurations, encompassing multiple quality attributes such as performance, interoperability, deployability, and availability. 
+\noindent In this case, we focus on testing the system's interoperability in the context of subsystem communication while still reporting how the outcomes affect the deployability and availability. The case aims to test message buses' interoperability limitations when using multiple buses within the same system and how it affects performance. The focus is on a system where a Message Queuing Telemetry Transport (MQTT) message bus produces messages on a Kafka message bus that acts as an intermediary. By exploring this case, the aim is to determine if getting data intermediary through Kafka causes a significant delay in messaging time, compared to setting up subsystems directly on the MQTT bus.
+
+\subsection{Quality attribute scenarios}
+\label{sec:qas}
+This section specifies and describes the architectural requirements based on the use case.
+The primary objective of this system is to ascertain if the choice of using two message buses affects performance, interoperability, deployability, and availability. In order to assess this, the architectural decisions and requirements have been elicited, with the goal of a system where it is possible to test these quality attributes independently.
+
+\input{tables/functionalReq}
+
+The brick sorting system is small, with a few functional requirements, and the implementation will be simple to facilitate experimentation. As stated in the functional use cases, the base architecture of the system should allow it to sort incoming Lego bricks based on their size and color, monitor the quantities of the bricks, and package the sorted Lego bricks, adding them to the warehouse inventory.
+
+\input{tables/nonFunctionalReq}
+
+As for non-functional requirements, the initial requirements were stated as part of the problem. Based on these, the system must operate continuously without interruption and be continuously deployable. Aside from the initial requirements, the system's use case aims to test different quality attributes. Regarding performance, the latency of messages passing from MQTT into Kafka must be under a second. To ensure system interoperability, the message buses MQTT and Kafka respectively, should follow a standardized format to facilitate consistency and easy interpretation. The system should address deployability by being containerised in Docker to ease deployment in different environments and improve scalability. It should be able to change faulty subsystems or install new subsystems while the system is running, promoting better availability. Critical subsystems such as warehouses, message buses, and production management systems must implement redundancy measures to address availability further.
+
+Ensuring an architecture where it is possible to test the quality attributes independently is not a requirement but a secondary aim. Including it as a requirement would affect the system's modularity and may result in isolating the different subsystems, which could restrict the behavior needed to fulfill the specified requirements. 
+By including these requirements in the design of the system, it should incorporate the initial requirements of the problem and the requirements defined to address the quality attributes chosen for the use case. 
