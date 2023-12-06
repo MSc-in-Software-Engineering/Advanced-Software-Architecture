@@ -1,1 +1,122 @@
-\input{conference_101719.tex}
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage{mdframed}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{makecell}
+\usepackage{tcolorbox}
+\usepackage{amsthm}
+\usepackage{pifont}
+\usepackage{svg}
+\usepackage[colorinlistoftodos]{todonotes}
+
+\graphicspath{ {./images/} }
+
+\usepackage{listings}
+\lstset
+{ 
+    basicstyle=\footnotesize,
+    numbers=left,
+    stepnumber=1,
+    xleftmargin=5.0ex,
+}
+
+\usepackage{subcaption}
+\usepackage{array, multirow}
+\usepackage{enumitem}
+
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\begin{document}
+
+\title{Architectural design challenges within a flexible and complex production system: An experiment}
+
+\makeatletter
+\newcommand{\linebreakand}{%
+  \end{@IEEEauthorhalign}
+  \hfill\mbox{}\par
+  \mbox{}\hfill\begin{@IEEEauthorhalign}
+}
+\makeatother
+
+\author{
+  \IEEEauthorblockN{Nina Siwakoti}
+  \IEEEauthorblockA{
+    \textit{Email: nisiw23@student.sdu.dk} \\'
+    \textit{University of Southern Denmark} \\
+    \textit{SDU Software Engineering} \\
+    \textit{Odense, Denmark}
+    }
+  \and
+  \IEEEauthorblockN{Karthikan Vimalarasan}
+  \IEEEauthorblockA{
+    \textit{Email: kavim19@student.sdu.dk} \\
+    \textit{University of Southern Denmark} \\
+    \textit{SDU Software Engineering} \\
+    \textit{Odense, Denmark}
+    }
+  \and
+  \IEEEauthorblockN{Sathveekan Mohanabalan}
+  \IEEEauthorblockA{
+    \textit{Email: samoh19@student.sdu.dk} \\
+    \textit{University of Southern Denmark} \\
+    \textit{SDU Software Engineering} \\
+    \textit{Odense, Denmark}
+    }
+  \linebreakand 
+  \IEEEauthorblockN{Simon Jørgensen}
+  \IEEEauthorblockA{
+    \textit{Email: sijo819@student.sdu.dk} \\
+    \textit{University of Southern Denmark} \\
+    \textit{SDU Software Engineering} \\
+    \textit{Odense, Denmark}
+    }
+  \and
+  \IEEEauthorblockN{Wahid Tobias Winberg Razzaghi}
+  \IEEEauthorblockA{
+    \textit{Email: waraz19@student.sdu.dk} \\
+    \textit{University of Southern Denmark} \\
+    \textit{SDU Software Engineering} \\
+    \textit{Odense, Denmark}
+    }
+}
+
+\maketitle
+\IEEEpubidadjcol
+
+\input{sections/abstract}
+
+\begin{IEEEkeywords}
+Industry 4.0, Microservice architecture, Event-driven architecture, Publish-subscribe pattern, Message-oriented middleware, Production software
+\end{IEEEkeywords}
+
+\input{sections/introduction}
+
+\input{sections/problem}
+
+\input{sections/literature_review}
+
+\input{sections/usecase_and_qa}
+
+\input{sections/solution}
+
+\input{sections/evaluation}
+
+\input{sections/discussion}
+
+\input{sections/conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\vspace{12pt}
+\end{document}

@@ -1,0 +1,22 @@
+\begin{table}[h]
+    \caption{Non-functional Requirements}
+    \label{tab:nonFunctionalReq}
+    \centering
+    \begin{tabular}{|l|l|p{4cm}|}
+        \hline
+        ID & Name & Description \\
+        \hline
+        NFRQ01 & Availability   & The system must operate continuously without interruption and be deployable.     \\
+        \hline
+        NFRQ02 & Performance          & Latency of messages passing from MQTT to Kafka must be under a second.  \\
+        \hline
+        NFRQ03 & Interoperability      & Message busses should follow standardized format for consistency and easy interpretation.   \\
+        \hline
+        NFRQ04 & Deployability        & The system should be containerised in Docker for ease of deployment across environments, scalability, and deployability.  \\
+        \hline
+        NFRQ05 & Availability     & Ability to change faulty subsystems or install new ones while the system is running.   \\
+        \hline
+        NFRQ06 & Redundancy           & Implement redundancy measures on critical subsystems for improved availability.  \\
+        \hline
+    \end{tabular}
+\end{table}
