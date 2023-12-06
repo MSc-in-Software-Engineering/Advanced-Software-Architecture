@@ -181,7 +181,7 @@ jobs:
         if: steps.latex-cache.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y texlive texlive-science
+          sudo apt-get install -y texlive-full texlive-science
 
       - name: Install LaTeX Extension
         run: |
