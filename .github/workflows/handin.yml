@@ -140,11 +140,6 @@ jobs:
           sudo apt-get install -y texlive-xetex
           mkdir handin/
 
-      - name: Install Additional LaTeX Packages
-        run: |
-          tlmgr update --self
-          tlmgr install --reinstall --all
-
       # Compile the main.tex file
       - name: Compile LaTeX document
         run: |
