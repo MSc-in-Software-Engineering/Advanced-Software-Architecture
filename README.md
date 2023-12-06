@@ -20,8 +20,18 @@ The VM utilized for this repository in which deployment is being made is on the 
 
 At last, ensure that a VPN connection to SDU's network is established.
 
-[Customer Service Subsystem](src/CustomerService/)
-[MQTT Mediator](src/MQTTMediator/)
-[MQTT Warehouse](src/MQTTWarehouse/)
-[Productions floor: Robotics](src/ProductionFloor/Robotics/)
-[Monitoring Subsystem](src/MonitoringSystem/)
+## Provided subsystems
+
+Navigation to each of the subsystems that are part of the overall architecture.
+
+- [Warehouse](src/Warehouse/)
+- [WarehouseSystem](src/WarehouseSystem/)
+- [Customer Service Subsystem](src/CustomerService/)
+- [MQTT Mediator](src/MQTTMediator/)
+- [MQTT Warehouse](src/MQTTWarehouse/)
+- [Productions floor: Robotics](src/ProductionFloor/Robotics/)
+- [Productions floor: IoT](src/ProductionFloor/IoT/)
+- [Productions floor: ConveyorBelts](src/ProductionFloor/ConveyorBelts/)
+- [Monitoring Subsystem](src/MonitoringSystem/)
+- [Metrics Analysis](src/MetricsAnalysis/)
+- [SupplyChainManagementDatabase](srcSupplyChainManagementDatabase/)
