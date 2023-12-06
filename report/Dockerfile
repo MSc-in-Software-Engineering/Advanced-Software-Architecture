@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Install LaTeX packages without interaction
 RUN apt-get update -q && \
-  apt-get install -yq texlive texlive-xetex texlive-science && \
+  apt-get install -yq texlive-full texlive-xetex texlive-science && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
