@@ -46,4 +46,4 @@ Navigation to each of the subsystems that are part of the overall architecture.
 - [Production Management System (Scheduling System)](src/ProductionManagement/SchedulingSystem)
 - [Monitoring Subsystem](src/MonitoringSystem/)
 - [Metrics Analysis](src/MetricsAnalysis/)
-- [SupplyChainManagementDatabase](srcSupplyChainManagementDatabase/)
+- [SupplyChainManagementDatabase](src/SupplyChainManagementDatabase/)
