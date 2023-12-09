@@ -29,12 +29,12 @@ services:
 
   ### SCM
   supply-chain-management-database:
-    image: ghcr.io/msc-in-software-engineering/supply_chain_management_database:latest
+    image: ghcr.io/msc-in-software-engineering/postgres-supply-chain-management-database:latest
     ports:
       - "5432:5432"
 
   warehouse-system:
-    image: ghcr.io/msc-in-software-engineering/warehouse_system:latest
+    image: ghcr.io/msc-in-software-engineering/ts_warehouse_system_sub:latest
     environment:
       - KAFKA_BROKER_ADDRESS=kafka
     depends_on:
@@ -43,7 +43,7 @@ services:
   customer-service:
     image: ghcr.io/msc-in-software-engineering/customer_service:latest
     env_file:
-      - ./.env
+      - ./CustomerService/.env
     depends_on:
       - supply-chain-management-database
 
@@ -111,7 +111,7 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./ProductionFloor/mosquitto.conf:/mosquitto/config/mosquitto.conf
 
 volumes:
   kafka_data:
